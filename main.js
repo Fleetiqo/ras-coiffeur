@@ -1,4 +1,3 @@
-// Nav toggle
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');
 const navLinks = document.querySelectorAll('.nav-links a');
@@ -28,43 +27,31 @@ document.addEventListener('click', (e) => {
 // Nav scroll effect
 const nav = document.querySelector('.nav');
 window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 80);
-}, { passive: true });
+  nav.classList.toggle('scrolled', window.pageYOffset > 80);
+});
 
 // Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
-    const href = this.getAttribute('href');
-    if (href === '#') return;
     e.preventDefault();
-    const target = document.querySelector(href);
+    const target = document.querySelector(this.getAttribute('href'));
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
 
-// Scroll reveal — staggered per section
-const revealObserver = new IntersectionObserver((entries) => {
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
     }
   });
-}, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+}, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
 
-const revealSelectors = [
-  '.service-card',
-  '.gallery-item',
-  '.hours-item',
-  '.contact-item',
-  '.team-content',
-  '.team-image',
-  '.section-header',
-  '.hours-cta',
-];
-
-document.querySelectorAll(revealSelectors.join(', ')).forEach((el, i) => {
-  el.classList.add('reveal');
-  el.style.transitionDelay = `${(i % 6) * 0.08}s`;
-  revealObserver.observe(el);
+document.querySelectorAll('.service-card, .gallery-item, .hours-item, .contact-item').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(30px)';
+  el.style.transition = `opacity 0.6s ease ${i * 0.07}s, transform 0.6s ease ${i * 0.07}s`;
+  observer.observe(el);
 });
